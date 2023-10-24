@@ -51,7 +51,7 @@ const EventList = () => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedEventDate = new Date(eventDate).toLocaleDateString(undefined, options);
   
-    const link = `https://facerecognition1234.netlify.app/registerAttendees?eventId=${eventId}&eventTitle=${encodeURIComponent(eventTitle)}&eventDate=${encodeURIComponent(formattedEventDate)}`;
+    const link = `https://facerecognition1234.netlify.app/faceRegister?eventId=${eventId}&eventTitle=${encodeURIComponent(eventTitle)}&eventDate=${encodeURIComponent(formattedEventDate)}`;
 
     navigator.clipboard.writeText(link)
       .then(() => {

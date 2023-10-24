@@ -13,9 +13,8 @@ import EventMonitorings from "./pages/EventMonitoting";
 import Reports from "./pages/Reports";
 import RegistrationForm  from "./pages/RegistrationForm";
 import EventForm  from "./pages/EventForm";
-import AttendeeForm  from "./pages/AttendeeForm";
 import { useSelector } from "react-redux";
-import FaceScanner from './pages/faceRecognition';
+import FaceRegister from './pages/FaceRegister';
 import AttendeeInfo from './pages/AttendeeInformation';
 import AttendeeInfo2 from './pages/AttendeesInformation';
 import FaceScanner2 from './pages/FaceScanner';
@@ -36,7 +35,7 @@ function App() {
             <div className="app">
                 {user ? null : <Navigation />}
                 <Routes>
-                    <Route path="/registerAttendees" element={<FaceScanner />} />
+                    <Route path="/faceRegister" element={<FaceRegister />} />
                 </Routes>
                 <div className="Main-Content">
                     {user ? <Sidebar /> : null}
