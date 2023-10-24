@@ -1,0 +1,18 @@
+.home__bg {background-image: url(./homebg.jpg);
+    
+    height: 500px; /* Adjust the height */
+    width: 550px; /* Adjust the width */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow-x: hidden;
+    background-color: rgba(109, 33, 79, 1.0);
+}
+
+
+
+.home-message-icon {
+    margin-left: 10px;
+    display: inline-block;
+}
+

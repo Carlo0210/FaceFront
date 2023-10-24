@@ -1,0 +1,33 @@
+.signup__bg {
+    background-image: url(https://img.freepik.com/free-vector/hand-drawn-business-communication-concept_52683-77063.jpg?w=740&t=st=1687609837~exp=1687610437~hmac=caaa2fb13b78b61a3389d52f95aaa01de00caff5a09aa6dac51c62c7b6741585);
+    height: 92vh;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow-x: hidden;
+}
+
+.signup-profile-pic__container {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.signup-profile-pic {
+    width: 100px;
+    border-radius: 50%;
+    border: 2px solid gray;
+    object-fit: cover;
+    height: 100px;
+}
+
+.add-picture-icon {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    color: green;
+    background: white;
+    cursor: pointer;
+    z-index: 99;
+}
