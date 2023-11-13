@@ -147,69 +147,48 @@ function App() {
   
         faceapi.draw.drawDetections(canvasRef.current, resized);
         faceapi.draw.drawFaceLandmarks(canvasRef.current, resized);
-  
-        if (resized.length > 0) {
-          // Face detected, update the image state with the image from the video feed
-          const videoCanvas = document.createElement('canvas');
-          videoCanvas.width = 640;
-          videoCanvas.height = 480;
-          const videoContext = videoCanvas.getContext('2d');
-          videoContext.drawImage(videoRef.current, 0, 0, 640, 480);
-          videoCanvas.toBlob(async (blob) => {
-            const imageFile = new File([blob], 'face_detected_image.png', { type: 'image/png' });
-            setImage(imageFile);
-  
-            const formData = new FormData();
-            formData.append('image', imageFile);
-            formData.append('eventId', eventId);
-  
-            try {
-              const response = await fetch('https://faceback.onrender.com/compare-faces', {
-                method: 'POST',
-                body: formData,
-              });
-  
-              const data = await response.json();
-              if (response.status === 200) {
-                const faceName = data.results[0].name;
-                if (detectedFaces.has(faceName)) {
-                  // This face is already recognized. Only update the "Time Out" timestamp.
-                  setResults((prevResults) => {
-                    const updatedResults = [...prevResults];
-                    const timestamp = new Date().toLocaleTimeString();
-                    const index = updatedResults.findIndex((result) => result.name === faceName);
-                    if (index !== -1) {
-                      updatedResults[index].timestampOut = timestamp;
-                    }
-                    return updatedResults;
-                  });
-                  setMessage('Time Out for ' + faceName);
-                } else {
-                  const timestamp = new Date().toLocaleTimeString();
-                  detectedFaces.add(faceName);
-                  setResults((prevResults) => [
-                    ...prevResults,
-                    {
-                      ...data.results[0],
-                      timestampIn: timestamp,
-                    },
-                  ]);
-                  setMessage('Time In for ' + faceName);
-                }
-              } else {
-                setMessage(data.message);
-              }
-            } catch (error) {
-              console.error(error);
-              setMessage('Error occurred during face comparison.');
-            }
-          }, 'image/png');
-        }
+
       }, 10000)
     );
   };
 
 
+  const captureImage = () => {
+    if (videoStarted) {
+      const videoCanvas = document.createElement('canvas');
+      videoCanvas.width = 640;
+      videoCanvas.height = 480;
+      const videoContext = videoCanvas.getContext('2d');
+      videoContext.drawImage(videoRef.current, 0, 0, 640, 480);
+  
+      videoCanvas.toBlob(async (blob) => {
+        const imageFile = new File([blob], 'captured_image.png', { type: 'image/png' });
+        setImage(imageFile);
+  
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        formData.append('eventId', eventId);
+  
+        try {
+          const response = await fetch('https://faceback.onrender.com/compare-faces', {
+            method: 'POST',
+            body: formData,
+          });
+  
+          const data = await response.json();
+          if (response.status === 200) {
+            // Handle the response as needed
+            console.log(data);
+          } else {
+            setMessage(data.message);
+          }
+        } catch (error) {
+          console.error(error);
+          setMessage('Error occurred during face comparison.');
+        }
+      }, 'image/png');
+    }
+  };
   
   
 
@@ -234,22 +213,39 @@ function App() {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('eventId', eventId);
-  
+
     try {
       const response = await fetch('https://faceback.onrender.com/compare-faces', {
         method: 'POST',
         body: formData,
       });
+
       const data = await response.json();
       if (response.status === 200) {
-        // Check if the face is already in the results
-        const isFaceAlreadyDetected = results.some((result) => result.name === data.results[0].name);
-  
-        if (isFaceAlreadyDetected) {
-          setMessage('This face is already time in');
+        const faceName = data.results[0].name;
+        if (detectedFaces.has(faceName)) {
+          // This face is already recognized. Only update the "Time Out" timestamp.
+          setResults((prevResults) => {
+            const updatedResults = [...prevResults];
+            const timestamp = new Date().toLocaleTimeString();
+            const index = updatedResults.findIndex((result) => result.name === faceName);
+            if (index !== -1) {
+              updatedResults[index].timestampOut = timestamp;
+            }
+            return updatedResults;
+          });
+          setMessage('Time Out for ' + faceName);
         } else {
-          setResults((prevResults) => [...prevResults, ...data.results]);
-          setMessage(data.message);
+          const timestamp = new Date().toLocaleTimeString();
+          detectedFaces.add(faceName);
+          setResults((prevResults) => [
+            ...prevResults,
+            {
+              ...data.results[0],
+              timestampIn: timestamp,
+            },
+          ]);
+          setMessage('Time In for ' + faceName);
         }
       } else {
         setMessage(data.message);
@@ -288,6 +284,9 @@ function App() {
           </Button>
         )} 
         <Button style={{ display: 'none' }} onClick={handleCompareFaces}>Compare Faces</Button>
+        <Button style={{ borderRadius: '50px' }} onClick={captureImage} title="Capture Image">
+          <i className="fa fa-camera" />
+        </Button>
 
       </div>
       <p>{message}</p>
